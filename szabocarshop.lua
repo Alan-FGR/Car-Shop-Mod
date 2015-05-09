@@ -553,9 +553,6 @@ end
 
 
 function szabocarshop.tick()
-	
-	previewcamrot = previewcamrot+2
-	if (previewcamrot > 360) then previewcamrot = 0 end
 
 	-- doorcoors: -368.1, -101.1, 39.5
 	
@@ -578,17 +575,12 @@ function szabocarshop.tick()
 			CAM.SET_GAMEPLAY_CAM_RELATIVE_HEADING(previewcamrot)
 			CAM.SET_GAMEPLAY_CAM_RELATIVE_PITCH(0, 10)
 		end
+		
+		previewcamrot = previewcamrot+2
+		if (previewcamrot > 360) then previewcamrot = 0 end
+		
 	end
 	
-end
-
-
-
-function callback(data)
-	print(data)
-end
-function selectcallback(data)
-	print('selected')
 end
 
 szgui={}
@@ -596,21 +588,24 @@ szgui.menus = {}
 szgui.curbut = 1
 szgui.curmenu = 'main'
 szgui.butsstates = {false,false,false,false}
+szgui.keysstates = {false,false,false,false}
 
 function szgui.domagic()
-						     --	up						down				(accept)enter		(cancel)back  escape
-	local curbutsstates = {get_key_pressed(40), get_key_pressed(38), get_key_pressed(13), get_key_pressed(8) or get_key_pressed(27)}
+						     --	up						down			(accept)enter		(cancel)back  escape [or get_key_pressed(27)]
+	local curbutsstates = {get_key_pressed(40), get_key_pressed(38), get_key_pressed(13), get_key_pressed(8)}
 	
 	local upkey = (curbutsstates[1] and not szgui.butsstates[1]) or CONTROLS.IS_DISABLED_CONTROL_JUST_PRESSED(2, 187)
 	local downkey = (curbutsstates[2] and not szgui.butsstates[2]) or CONTROLS.IS_DISABLED_CONTROL_JUST_PRESSED(2, 188)
 	local acceptkey = (curbutsstates[3] and not szgui.butsstates[3]) or CONTROLS.IS_DISABLED_CONTROL_JUST_PRESSED(2, 201)
 	local cancelkey = (curbutsstates[4] and not szgui.butsstates[4]) or CONTROLS.IS_DISABLED_CONTROL_JUST_PRESSED(2, 202)
-	
-	if (upkey) then szgui.curbut = szgui.curbut+1; szgui.selectcall(szgui.curbut)
-	elseif (downkey) then szgui.curbut = szgui.curbut-1; szgui.selectcall(szgui.curbut)
-	elseif (acceptkey) then	szgui.menus[szgui.curmenu][szgui.curbut][2](szgui.menus[szgui.curmenu][szgui.curbut][3])
-	elseif (cancelkey) then	szgui.menus[szgui.curmenu][#szgui.menus[szgui.curmenu]][2](szgui.menus[szgui.curmenu][#szgui.menus[szgui.curmenu]][3])
+	szgui.butsstates = curbutsstates
+
+	if (upkey and not szgui.keysstates[1]) then szgui.curbut = szgui.curbut+1; szgui.selectcall(szgui.curbut)
+	elseif (downkey and not szgui.keysstates[2]) then szgui.curbut = szgui.curbut-1; szgui.selectcall(szgui.curbut)
+	elseif (acceptkey and not szgui.keysstates[3]) then	szgui.menus[szgui.curmenu][szgui.curbut][2](szgui.menus[szgui.curmenu][szgui.curbut][3])
+	elseif (cancelkey and not szgui.keysstates[4]) then	szgui.menus[szgui.curmenu][#szgui.menus[szgui.curmenu]][2](szgui.menus[szgui.curmenu][#szgui.menus[szgui.curmenu]][3])
 	end
+	szgui.keysstates = {upkey,downkey,acceptkey,cancelkey}
 	
 	if (szgui.menus[szgui.curmenu] == nil) then
 		szgui.curmenu = 'main'
@@ -619,7 +614,6 @@ function szgui.domagic()
 	end
 	
 	if (szgui.curbut > #szgui.menus[szgui.curmenu]) then szgui.curbut=1 elseif szgui.curbut < 1 then szgui.curbut = #szgui.menus[szgui.curmenu] end
-	szgui.butsstates = curbutsstates
 	for i,but in ipairs(szgui.menus[szgui.curmenu]) do
 		szgui.drawbut(i)
 	end
