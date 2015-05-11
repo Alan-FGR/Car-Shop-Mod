@@ -50,6 +50,20 @@ local function spawnpreviewv(data)
 
 end
 
+local function addmoneytoplayer(val)
+
+	mhash = GAMEPLAY.GET_HASH_KEY("SP0_TOTAL_CASH")
+	if (PED.IS_PED_MODEL(PLAYER.PLAYER_PED_ID(), GAMEPLAY.GET_HASH_KEY("player_one"))) then                                
+		mhash = GAMEPLAY.GET_HASH_KEY("SP1_TOTAL_CASH")                                     
+	elseif (PED.IS_PED_MODEL(PLAYER.PLAYER_PED_ID(), GAMEPLAY.GET_HASH_KEY("player_two"))) then
+		mhash = GAMEPLAY.GET_HASH_KEY("SP2_TOTAL_CASH")  
+	end
+	
+	local _, curval = STATS.STAT_GET_INT(mhash, 0, -1)
+	STATS.STAT_SET_INT(mhash, curval+val, true)
+		
+end
+
 local function gotochoosecolor()
 	szgui.curmenu = 'colors'
 	szgui.curbut = 1
@@ -60,10 +74,7 @@ local function choosecolor()
 	szgui.curmenu = 'main'
 	CONTROLS.ENABLE_ALL_CONTROL_ACTIONS(2)
 	
-	spid = tostring(PLAYER.PLAYER_ID())
-	local hash = GAMEPLAY.GET_HASH_KEY("SP"..spid.."_TOTAL_CASH")
-	local _, curval = STATS.STAT_GET_INT(hash, 0, -1)
-	STATS.STAT_SET_INT(hash, curval-previewvvalue, true)
+	addmoneytoplayer(-previewvvalue)
 	
 end
 
@@ -117,7 +128,7 @@ local function addlisttomenu(list, menustr)
 		end
 		
 		local vname = VEHICLE.GET_DISPLAY_NAME_FROM_VEHICLE_MODEL(car[1])
-		print("added", vname, "to menu", curmenustr)
+		-- print("added", vname, "to menu", curmenustr)
 		table.insert(szgui.menus[curmenustr], {vname .. " $" .. tostring(car[2]), gotochoosecolor, car, spawnpreviewv})
 		
 		if ((i-1) % 15 == 14 or i == #list) then
@@ -508,7 +519,7 @@ local dlc = {
 {	0x825A9F4C	,	375000	},--        guardian =
 {	0x26321E67	,	750000	},--        lectro = 0
 {	0xAE2BFE94	,	95000	},--        kuruma = 0
-{	0x187D938D	,	95000	},--        kuruma2 = 
+{	0x187D938D	,	195000	},--        kuruma2 = 
 {	0xB527915C	,	35000	},--        trash2 = 0
 {	0x2592B5CF	,	450000	},--        barracks3 
 {	0xA09E15FD	,	2850000	},--        valkyrie =
@@ -553,7 +564,7 @@ end
 
 
 function szabocarshop.tick()
-
+	
 	-- doorcoors: -368.1, -101.1, 39.5
 	
 	local playerPed = PLAYER.PLAYER_PED_ID()
