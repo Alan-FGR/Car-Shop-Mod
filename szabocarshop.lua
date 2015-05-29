@@ -557,7 +557,9 @@ local dlc = {
 
 	blip = UI.ADD_BLIP_FOR_COORD(-368.1, -101.1, 39.5)
 	UI.SET_BLIP_SCALE(blip, 0.8)
-	UI.SET_BLIP_COLOUR(blip, 0x9900FFFF)
+	UI.SET_BLIP_COLOUR(blip, 61) --2566979583--0x9900FFFF --broken in v10
+	UI.SET_BLIP_FLASHES(blip, false)
+	
 	-- UI.SET_BLIP_NAME_FROM_TEXT_FILE(blip, "Szabo Car Shop")
 
 end
