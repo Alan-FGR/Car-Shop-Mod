@@ -581,7 +581,8 @@ function szabocarshop.tick()
 	if (showmenu) then
 		szgui.domagic()
 		CONTROLS.DISABLE_ALL_CONTROL_ACTIONS(2)
-		CONTROLS.ENABLE_CONTROL_ACTION(2,0,true)
+		CONTROLS.ENABLE_CONTROL_ACTION(2,0,1)
+		-- For v10 - use 1 instead of true ^^^^here
 		if (playerInV) then
 			CAM.SET_GAMEPLAY_CAM_RELATIVE_HEADING(previewcamrot)
 			CAM.SET_GAMEPLAY_CAM_RELATIVE_PITCH(0, 10)
